@@ -3,7 +3,7 @@
     "short_name": "Brain10x APP",
     "start_url": "index.html",
     "display": "fullscreen",
-    "background_color": "#214380",
+    "background_color": "#274F96",
     "theme_color": "#000",
     "description": "Brain10x Official Application.",
     "icons": [{
