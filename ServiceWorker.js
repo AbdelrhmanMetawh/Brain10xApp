@@ -1,9 +1,9 @@
-const cacheName = "Brain10x-Brain10x APP-0.6";
+const cacheName = "Brain10x-Brain10x APP-0.8";
 const contentToCache = [
-    "Build/build_0.6.loader.js",
-    "Build/build_0.6.framework.js",
-    "Build/build_0.6.data",
-    "Build/build_0.6.wasm",
+    "Build/build_0.8.loader.js",
+    "Build/build_0.8.framework.js",
+    "Build/build_0.8.data",
+    "Build/build_0.8.wasm",
     "TemplateData/style.css"
 
 ];
@@ -24,16 +24,15 @@ self.addEventListener('activate', event => {
     console.log('[Service Worker] Activate');
     event.waitUntil((async () => {
         const keys = await caches.keys();
-        await Promise.all(
-            keys.map(key => key !== cacheName && caches.delete(key))
-        );
+        await Promise.all(keys.map(key => key !== cacheName && caches.delete(key)));
         await self.clients.claim();
 
-        // Notify clients that a new version is ready
-        const clients = await self.clients.matchAll({ type: 'window' });
-        for (const client of clients) {
-            client.postMessage({ type: 'NEW_VERSION_AVAILABLE' });
-        }
+        // Send message to all clients to trigger popup
+		const clients = await self.clients.matchAll({ type: 'window' });
+		for (const client of clients) {
+		client.postMessage({ type: 'NEW_VERSION_AVAILABLE' });
+		}
+	
     })());
 });
 
