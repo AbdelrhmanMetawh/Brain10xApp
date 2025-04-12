@@ -7,6 +7,82 @@
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
     <link rel="manifest" href="manifest.webmanifest">
+	
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200..1000&display=swap" rel="stylesheet">
+	
+	<style>
+      /* Blur Overlay (only active when popup is shown) */
+      #blurOverlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        backdrop-filter: blur(4px);
+        background: rgba(0, 0, 0, 0.3);
+        z-index: 9998;
+        display: none;
+      }
+  
+      /* Popup Container */
+      #updatePopup {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #161619;
+        color: #fff;
+        padding: 35px 55px;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+        z-index: 9999;
+        display: none;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: auto;
+        max-width: 400px;
+        animation: fadeInUp 0.5s ease-out;
+
+        font-family: cairo;
+      }
+  
+      #updatePopup h1 {
+        font-size: 19px;
+        margin: 0 0 20px;
+        text-align: center;
+        width: 155px;
+      }
+  
+      #updatePopup button {
+        background: #4caf50;
+        color: white;
+        border: none;
+        padding: 10px 25px;
+        border-radius: 7px;
+        cursor: pointer;
+        font-size: 17px;
+        width: 100%;
+        max-width: 200px;
+        margin: 10px 0;
+
+        font-family: cairo;
+      }
+  
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translate(-50%, -40%);
+        }
+        to {
+          opacity: 1;
+          transform: translate(-50%, -50%);
+        }
+      }
+    </style>
+	
   </head>
   <body>
     <div id="unity-container">
@@ -57,16 +133,16 @@
       }
 
       var buildUrl = "Build";
-      var loaderUrl = buildUrl + "/build_0.5.loader.js";
+      var loaderUrl = buildUrl + "/build_0.6.loader.js";
       var config = {
         arguments: [],
-        dataUrl: buildUrl + "/build_0.5.data",
-        frameworkUrl: buildUrl + "/build_0.5.framework.js",
-        codeUrl: buildUrl + "/build_0.5.wasm",
+        dataUrl: buildUrl + "/build_0.6.data",
+        frameworkUrl: buildUrl + "/build_0.6.framework.js",
+        codeUrl: buildUrl + "/build_0.6.wasm",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "Brain10x",
         productName: "Brain10x APP",
-        productVersion: "0.5",
+        productVersion: "0.6",
         showBanner: unityShowBanner,
       };
 
@@ -100,7 +176,8 @@
       };
       document.body.appendChild(script);
 	  
-	      if ('serviceWorker' in navigator) {
+	 /* new */
+    if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('ServiceWorker.js').then(reg => {
             console.log('Service worker registered:', reg);
         });
@@ -113,7 +190,43 @@
             }
         });
     }
+	/* new */
 	  
     </script>
+	
+<!-- Your Popup Code Goes Here -->
+<!-- Blur Background -->
+<div id="blurOverlay"></div>
+
+<!-- Popup -->
+<div id="updatePopup">
+  <h1>إصدار جديد متاح</h1>
+  <button style="background: #4caf50;" onclick="location.reload(true)">تحديث</button>
+  <button style="background: #2d3436;" onclick="hidePopup()">لاحقاً</button>
+</div>
+
+<!-- Notification Sound -->
+<audio id="popupSound" preload="auto">
+  <source src="out-of-nowhere-pop-up.mp3" type="audio/mp3">
+</audio>
+
+<!-- JS to Trigger Popup -->
+<script>
+  function showPopup() {
+    document.getElementById('blurOverlay').style.display = 'block';
+    document.getElementById('updatePopup').style.display = 'flex';
+
+    const sound = document.getElementById('popupSound');
+    sound.volume = 0.5;
+    sound.play().catch(e => console.warn("Sound play failed:", e));
+  }
+
+  function hidePopup() {
+    document.getElementById('blurOverlay').style.display = 'none';
+    document.getElementById('updatePopup').style.display = 'none';
+  }
+
+</script>
+	
   </body>
 </html>
