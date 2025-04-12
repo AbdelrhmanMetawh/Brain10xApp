@@ -19,29 +19,29 @@ self.addEventListener('install', function (e) {
     self.skipWaiting(); // Activate immediately
 });
 
-// Activate event: clean up old caches
-self.addEventListener('activate', function (e) {
+// Activate event: clean up old caches and notify clients
+self.addEventListener('activate', event => {
     console.log('[Service Worker] Activate');
-    e.waitUntil((async function () {
+    event.waitUntil((async () => {
         const keys = await caches.keys();
         await Promise.all(
-            keys.map((key) => {
-                if (key !== cacheName) {
-                    console.log('[Service Worker] Deleting old cache:', key);
-                    return caches.delete(key);
-                }
-            })
+            keys.map(key => key !== cacheName && caches.delete(key))
         );
+        await self.clients.claim();
+
+        // Notify clients that a new version is ready
+        const clients = await self.clients.matchAll({ type: 'window' });
+        for (const client of clients) {
+            client.postMessage({ type: 'NEW_VERSION_AVAILABLE' });
+        }
     })());
-    self.clients.claim(); // Take control immediately
 });
 
-// Fetch event: serve from cache, then fetch and cache new
+// Fetch event: serve from cache, fetch and cache new
 self.addEventListener('fetch', function (e) {
     e.respondWith((async function () {
         const cachedResponse = await caches.match(e.request);
         if (cachedResponse) {
-            console.log(`[Service Worker] Serving from cache: ${e.request.url}`);
             return cachedResponse;
         }
 
@@ -49,7 +49,6 @@ self.addEventListener('fetch', function (e) {
             const networkResponse = await fetch(e.request);
             const cache = await caches.open(cacheName);
             cache.put(e.request, networkResponse.clone());
-            console.log(`[Service Worker] Fetched & cached: ${e.request.url}`);
             return networkResponse;
         } catch (err) {
             console.warn(`[Service Worker] Fetch failed: ${e.request.url}`, err);

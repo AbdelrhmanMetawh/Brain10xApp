@@ -99,6 +99,21 @@
         });
       };
       document.body.appendChild(script);
+	  
+	      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('ServiceWorker.js').then(reg => {
+            console.log('Service worker registered:', reg);
+        });
+
+        navigator.serviceWorker.addEventListener('message', event => {
+            if (event.data && event.data.type === 'NEW_VERSION_AVAILABLE') {
+                if (confirm("A new version of the app is available. Reload now?")) {
+                    window.location.reload(true); // true = force reload from server
+                }
+            }
+        });
+    }
+	  
     </script>
   </body>
 </html>
