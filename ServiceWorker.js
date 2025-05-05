@@ -1,9 +1,9 @@
-const cacheName = "Brain10x-Brain10x APP-0.18";
+const cacheName = "Brain10x-Brain10x APP-0.19";
 const contentToCache = [
-    "Build/build_0.18.loader.js",
-    "Build/build_0.18.framework.js",
-    "Build/build_0.18.data",
-    "Build/build_0.18.wasm",
+    "Build/build_0.19.loader.js",
+    "Build/build_0.19.framework.js",
+    "Build/build_0.19.data",
+    "Build/build_0.19.wasm",
     "TemplateData/style.css"
 
 ];
